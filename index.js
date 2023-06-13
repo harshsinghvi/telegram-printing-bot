@@ -15,6 +15,7 @@ config = {
   printerOptions: {
     printer: process.env.SELECTED_PRINTER || '',
   },
+  authorizedChatIds: process.env.AUTHORIZED_CHAT_IDS.split(',').map(id => parseInt(id))
 };
 
 const download = (url, fileName) =>
@@ -71,6 +72,11 @@ bot.command("oldschool", (ctx) => {
 
 bot.command("hipster", Telegraf.reply("λ"));
 
+bot.command("info", (ctx) => {
+  const chatId = ctx.update.message.chat.id
+  ctx.reply(JSON.stringify({ chatId }));
+})
+
 bot.command("printer", async (ctx) => {
   try {
     const { text: command = "" } = ctx.update.message || {};
@@ -98,10 +104,10 @@ bot.command("printer", async (ctx) => {
 
 bot.command("print", async (ctx) => {
   try {
-    const { reply_to_message = {}, text: command = "" } =
-      ctx.update.message || {};
+    const { reply_to_message = {}, text: command = "", chat: { id: chatId } } = ctx.update.message || {};
     const { document: file = {} } = reply_to_message;
 
+    if (!config.authorizedChatIds.includes(chatId)) return ctx.reply("Unauthorized, please contact +919772332434");
     if (!file || !reply_to_message) return ctx.reply("Reply to a pdf file");
 
     if (file.mime_type !== "application/pdf")
@@ -114,11 +120,11 @@ bot.command("print", async (ctx) => {
     const filePath = await download(fileUrl, fileName);
 
     const args = parseCommand(command);
-    copies = parseInt(args[1])
+    copies = parseInt(args[1]) || 1
 
     await print(filePath, { ...config.printerOptions, copies })
 
-    ctx.reply("Print job completed", {
+    ctx.reply("Print job started", {
       reply_to_message_id: reply_to_message.message_id,
     });
   } catch (err) {
