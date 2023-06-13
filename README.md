@@ -1,6 +1,6 @@
 # telegram-printing-bot
 
-> Telegram bot Printing service (Windows only)
+> Telegram bot Printing service (Windows only), Small Schale Cloud Printing alternative
 
 ```.env
 SELECTED_PRINTER=
@@ -13,6 +13,10 @@ AUTHORIZED_CHAT_IDS=1111111,-1112122,22222
 - /print
 - /printer
 - /info
+
+## Instuctions
+
+- if you use group chat (for access management), enble chat visibility for new members and add the bot, and chat if in env file 
 
 ## Build 
 
