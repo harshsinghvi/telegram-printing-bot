@@ -1,4 +1,5 @@
 # telegram-printing-bot
+
 > Telegram bot Printing service (Windows only)
 
 ```.env
@@ -8,12 +9,16 @@ AUTHORIZED_CHAT_IDS=1111111,-1112122,22222
 ```
 
 ## Commands:
+
 - /print
 - /printer
 - /info
 
 ## Build 
+
 `pkg index.js -o build\index`
+
+> copy `build\index.exe` and `.env` files to destination directory run index.exe
 
 ## Ref
 - [Create Service in windows](https://stackoverflow.com/questions/3582108/create-windows-service-from-executable)
