@@ -12,7 +12,9 @@ require("dotenv").config();
 config = {
   baseFilePath: "temp",
   botToken: process.env.BOT_TOKEN,
-  printeOptions: {},
+  printerOptions: {
+    printer: process.env.SELECTED_PRINTER || '',
+  },
 };
 
 const download = (url, fileName) =>
@@ -55,7 +57,7 @@ const parseCommand = (cmdline) => {
   return args;
 };
 
-const bot = new Telegraf("1393239992:AAE9DH3sGfk1VNhma9-iZBl3Fo2HLK96UzU");
+const bot = new Telegraf(config.botToken);
 
 bot.start((ctx) => ctx.reply("Welcome"));
 bot.help((ctx) => ctx.reply("Send me a sticker"));
@@ -70,25 +72,32 @@ bot.command("oldschool", (ctx) => {
 bot.command("hipster", Telegraf.reply("λ"));
 
 bot.command("printer", async (ctx) => {
-  const { text: command = "" } = ctx.update.message || {};
-  const args = parseCommand(command);
-  let reply = "";
-  if (args.length === 1) {
-    reply = ```
+  try {
+    const { text: command = "" } = ctx.update.message || {};
+    const args = parseCommand(command);
+    const printers = await getPrinters();
 
+    let reply = "";
 
-  ```;
-  } else if (args.length === 3 && args[1] === "set") {
-    config.printeOptions.printer = "";
+    if (args.length === 1) {
+      const defaultPrinter = await getDefaultPrinter();
+      reply = `List of printers \n${printers.map(({ name }, i) => `${i} - ${name}`).join('\n')}\nDefault: ${defaultPrinter}\nSelected: ${config.printerOptions.printer}`.trim();
+    } else if (args.length === 3 && args[1] === "set" && (parseInt(args[2]) >= 0 && parseInt(args[2]) < printers.length)) {
+      config.printerOptions.printer = printers[parseInt(args[2])].name;
+      reply = `Selected ${printers[parseInt(args[2])].name}`;
+    }
+
+    ctx.reply(reply, {
+      reply_to_message_id: ctx.message.message_id,
+    });
+  } catch (err) {
+    ctx.reply("Internal Error");
+    console.log(err);
   }
-  ctx.reply(reply, {
-    reply_to_message_id: ctx.message.message_id,
-  });
 });
 
 bot.command("print", async (ctx) => {
   try {
-    // const file = ctx.update.message.reply_to_message.document;
     const { reply_to_message = {}, text: command = "" } =
       ctx.update.message || {};
     const { document: file = {} } = reply_to_message;
@@ -104,25 +113,18 @@ bot.command("print", async (ctx) => {
     const fileUrl = await ctx.telegram.getFileLink(fileId);
     const filePath = await download(fileUrl, fileName);
 
-    const [copies] = parseCommand(command);
+    const args = parseCommand(command);
+    copies = parseInt(args[1])
 
-    ctx.reply("kk", {
+    await print(filePath, { ...config.printerOptions, copies })
+
+    ctx.reply("Print job completed", {
       reply_to_message_id: reply_to_message.message_id,
     });
   } catch (err) {
     ctx.reply("Internal Error");
     console.log(err);
   }
-
-  // ctx.telegram.getFileLink(fileId).then(url => {
-  //     axios({url, responseType: 'stream'}).then(response => {
-  //         return new Promise((resolve, reject) => {
-  //             response.data.pipe(fs.createWriteStream(`${config.basePath}/public/images/profiles/${ctx.update.message.from.id}.jpg`))
-  //                         .on('finish', () => /* File is saved. */)
-  //                         .on('error', e => /* An error has occured */)
-  //                 });
-  //             })
-  // })
 });
 
 bot.launch();
