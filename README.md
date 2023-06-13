@@ -25,5 +25,6 @@ AUTHORIZED_CHAT_IDS=1111111,-1112122,22222
 > copy `build\index.exe` and `.env` files to destination directory run index.exe
 
 ## Ref
+
 - [Create Service in windows](https://stackoverflow.com/questions/3582108/create-windows-service-from-executable)
 - [Package node app](https://stackoverflow.com/questions/67897358/compile-nodejs-to-binary)
