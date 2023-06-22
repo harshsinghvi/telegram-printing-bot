@@ -26,5 +26,7 @@ AUTHORIZED_CHAT_IDS=1111111,-1112122,22222
 
 ## Ref
 
-- [Create Service in windows](https://stackoverflow.com/questions/3582108/create-windows-service-from-executable)
+- [Create Service in windows 1](https://stackoverflow.com/questions/3582108/create-windows-service-from-executable)
+- [Create Service in windows 2](https://stackoverflow.com/questions/20445599/auto-start-node-js-server-on-boot)
+- [Create Service in windows 3](https://github.com/tallesl/qckwinsvc)
 - [Package node app](https://stackoverflow.com/questions/67897358/compile-nodejs-to-binary)
