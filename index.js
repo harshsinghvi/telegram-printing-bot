@@ -1,5 +1,5 @@
 const { Telegraf } = require("telegraf");
-const shutDownWin = require('shutdownHelper');
+const shutDownWin = require('./shutdownHelper');
 
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
 
@@ -7,6 +7,7 @@ const fs = require("fs");
 const request = require("request");
 const path = require("path");
 require("dotenv").config();
+const  os = require('os');
 // const fetch = require("node-fetch");
 
 config = {
@@ -71,8 +72,6 @@ bot.command("info", (ctx) => {
     selectedPrinter: config.printerOptions.printer,
     userInfo: os.userInfo(),
     hostname: os.hostname(),
-    machine: os.machine(),
-    uptime: os.uptime(),
     version: os.version()
   }, null, 2));
 });
