@@ -1,5 +1,5 @@
 const { Telegraf } = require("telegraf");
-const { message } = require("telegraf/filters");
+const shutDownWin = require('node-shutdown-windows');
 
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
 
@@ -61,21 +61,21 @@ const parseCommand = (cmdline) => {
 const bot = new Telegraf(config.botToken);
 
 bot.start((ctx) => ctx.reply("Welcome"));
-bot.help((ctx) => ctx.reply("Send me a sticker"));
-bot.on(message("sticker"), (ctx) => ctx.reply("👍"));
+bot.help((ctx) => ctx.reply("Contact 9772332434"));
 bot.hears("hi", (ctx) => ctx.reply("Hey there"));
-
-bot.command("oldschool", (ctx) => {
-  console.log(ctx.chat);
-  return ctx.reply("Hello");
-});
-
-bot.command("hipster", Telegraf.reply("λ"));
 
 bot.command("info", (ctx) => {
   const chatId = ctx.update.message.chat.id
-  ctx.reply(JSON.stringify({ chatId }));
-})
+  ctx.reply(JSON.stringify({
+    chatId,
+    selectedPrinter: config.printerOptions.printer,
+    userInfo: os.userInfo(),
+    hostname: os.hostname(),
+    machine: os.machine(),
+    uptime: os.uptime(),
+    version: os.version()
+  }, null, 2));
+});
 
 bot.command("printer", async (ctx) => {
   try {
@@ -132,6 +132,17 @@ bot.command("print", async (ctx) => {
     console.log(err);
   }
 });
+
+bot.command("shutdown", async (ctx) => {
+  try {
+    shutDownWin.shutdown(10, false, 'The system will shut down in 10 seconds, from Telegram command');
+    ctx.reply("Shutting down computer in 10");
+    bot.stop();
+  } catch (err) {
+    ctx.reply("Internal Error");
+    console.log(err);
+  }
+})
 
 bot.launch();
 
