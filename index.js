@@ -134,9 +134,8 @@ bot.command("print", async (ctx) => {
 
 bot.command("shutdown", async (ctx) => {
   try {
-    shutDownWin.shutdown(10, false, 'The system will shut down in 10 seconds, from Telegram command');
-    ctx.reply("Shutting down computer in 10");
-    bot.stop();
+    shutDownWin.shutdown(3);
+    ctx.reply("Shutting down computer in 3");
   } catch (err) {
     ctx.reply("Internal Error");
     console.log(err);
