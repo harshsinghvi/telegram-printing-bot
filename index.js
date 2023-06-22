@@ -1,5 +1,5 @@
 const { Telegraf } = require("telegraf");
-const shutDownWin = require('node-shutdown-windows');
+const shutDownWin = require('shutdownHelper');
 
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
 
