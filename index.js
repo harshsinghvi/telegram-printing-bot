@@ -7,7 +7,7 @@ const fs = require("fs");
 const request = require("request");
 const path = require("path");
 require("dotenv").config();
-const  os = require('os');
+const os = require('os');
 // const fetch = require("node-fetch");
 
 config = {
@@ -78,7 +78,9 @@ bot.command("info", (ctx) => {
 
 bot.command("printer", async (ctx) => {
   try {
-    const { text: command = "" } = ctx.update.message || {};
+    const { text: command = "", chat: { id: chatId } } = ctx.update.message || {};
+    if (!config.authorizedChatIds.includes(chatId)) return ctx.reply("Unauthorized, please contact +919772332434");
+
     const args = parseCommand(command);
     const printers = await getPrinters();
 
@@ -134,6 +136,9 @@ bot.command("print", async (ctx) => {
 
 bot.command("shutdown", async (ctx) => {
   try {
+    const { chat: { id: chatId } } = ctx.update.message || {};
+    if (!config.authorizedChatIds.includes(chatId)) return ctx.reply("Unauthorized, please contact +919772332434");
+
     shutDownWin.shutdown(3);
     ctx.reply("Shutting down computer in 3");
   } catch (err) {
